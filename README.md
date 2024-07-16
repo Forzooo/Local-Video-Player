@@ -4,11 +4,13 @@ It is written in Python 3.12 (which is required), and is Open Source under the G
 
 **About new releases.** The development of this tool has just started and a lot of new features will come in next versions.
 
+**About the templates.** Templates will be chosen by the user to customize the webserver based on his preferences. In future the user will be able to create is own too.
+
 **How to compile the tool.**
 1. Download the source code of the repository (You can either download it from the last release or from the repository itself)
 2. Open a terminal
 3. Using `cd` go to `Local-Video-Player/source/` 
-4. Write and execute the following command: 
+4. Copy and execute the following command: 
 ```
 pyinstaller --noconfirm --onedir --add-data "C:/Users/user/AppData/Local/Programs/Python/Python312/Lib/site-packages/customtkinter;customtkinter/" --add-data "./lvp_templates/;./lvp_templates/" "App.py"
 ```

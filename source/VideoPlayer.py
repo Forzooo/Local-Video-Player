@@ -32,7 +32,7 @@ class VideoPlayer:
             video_folder = os.path.join(self.app.static_folder, 'videos')
             videos = [f for f in os.listdir(video_folder) if f.endswith('.mp4')]
             return render_template('index.html', videos=videos)
-        
+    
     def run(self):
         self.server = make_server('0.0.0.0', self.port, self.app)
         self.server.serve_forever()
