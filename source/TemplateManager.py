@@ -21,7 +21,7 @@ class TemplateManager:
 
     # Return the name of the mode used by the server
     def get_current_mode(self) -> str:
-        return os.path.basename(self.mode)
+        return self.mode.split("/")[-2] # The name of the directory is the second last as the last is '' because the path is ".../mode_name/"
     
     # Update, if new modes have been added, and then return a list providing all the names of the modes available
     def get_modes(self) -> list:

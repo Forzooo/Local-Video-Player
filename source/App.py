@@ -1,8 +1,9 @@
-import tkinter, tkinter.messagebox, customtkinter, os
+import tkinter, tkinter.messagebox, customtkinter, os, CTkMessagebox, pathlib
 from tkinter import filedialog
 from VideoPlayer import VideoPlayer
 from LocalVideo import LocalVideo
-from TemplateManager import TemplateManager # Currently not implemented as wanted
+from TemplateManager import TemplateManager
+from Options import Options
 
 # Set the mode and the theme of the Local Video Player GUI
 customtkinter.set_appearance_mode("System")
@@ -21,14 +22,19 @@ class ScrollableLabelButtonFrame(customtkinter.CTkScrollableFrame):
 
     def add_video(self, video: str, source: str):
         # sources supported: 
-        # 'local': LocalVideo with copy/move 
-        # 'local-do-not-operate': LocalVideo without copy/move functions enabled
+        # 'local': LocalVideo without move/copy operation
+        # 'local-copy': LocalVideo with copy operation 
+        # 'local-move': LocalVideo with move operation
 
-        if source == "local":
-            local_video = LocalVideo(video, True)
+        if source == "local": # local without any operation currenly is executed only with the function App.retrieve_videos
+            local_video = LocalVideo(video, None)
+
+        elif source == "local-copy": # Check if the operation, assuming the video is local, is to execute copy
+            local_video = LocalVideo(video, operation="copy")
         
-        elif source == "local-do-not-operate":
-            local_video = LocalVideo(video, False)
+        elif source == "local-move": # Check if the operation, assuming the video is local, is to execute copy 
+            local_video = LocalVideo(video, operation="move")
+
 
         video_name_label = customtkinter.CTkLabel(self, text=f"Local: {local_video.get_video_name()}", compound="left", padx=5, anchor="w")
         remove_button = customtkinter.CTkButton(self, text="Delete", width=100, height=24, command=lambda: self.command(video)) # Set the command of the button to App.delete_video
@@ -59,8 +65,11 @@ class App(customtkinter.CTk):
         super().__init__()
 
         self.videoPlayer = VideoPlayer() # Create the Video Player object used to manage the webserver
-        templateManager = TemplateManager() # Currently not implemented as wanted: it will be in the options
-        templateManager.load_mode("normal_mode") # As now the user has to use the normal_mode as the template for the server
+
+        # The template manager needs to be created here as inside Options it would be destroyed every time: it would lose the current mode selected
+        self.templateManager = TemplateManager()
+        self.templateManager.load_mode("normal_mode") # The default template chosen is normal_mode which it's loaded at the start of the tool as the server  
+                                                      # needs one template to be run. (It can be changed in Options)
 
         self.title("Local Video Player")
         self.geometry(f"{1200}x{580}")
@@ -73,7 +82,7 @@ class App(customtkinter.CTk):
 
         self.video_list_frame = ScrollableLabelButtonFrame(master=self, width=900, command=self.delete_video, corner_radius=0) # Crete the frame of the video entered by the user
         self.video_list_frame.grid(row=1, column=0, padx=20, pady=20, sticky="nsew")
-        self.retrive_videos() # Retrieve videos that are already inside the videos folder, and add them to the frame
+        self.retrieve_videos() # Retrieve videos that are already inside the videos folder, and add them to the frame
 
         self.add_video_button = customtkinter.CTkButton(master=self, text="Add a video", command=self.add_video, fg_color="transparent", border_width=1, text_color=("gray10", "#DCE4EE"))
         self.add_video_button.grid(row=1, column=1, padx=(20, 20), pady=(0, 150))
@@ -82,17 +91,13 @@ class App(customtkinter.CTk):
         self.server_button = customtkinter.CTkButton(master=self, text="Start server", command=self.server_button_execute, fg_color="transparent", border_width=1, text_color=("gray10", "#DCE4EE"))
         self.server_button.grid(row=1, column=1, padx=(20, 20), pady=(0, 50))
 
-        # Currently the options are not developed yet, so the button is disabled
-        self.options_button = customtkinter.CTkButton(master=self, text="Options", command=self.show_options, fg_color="transparent", state="disabled", border_width=1, text_color=("gray10", "#DCE4EE"))
+        self.options_window = None
+        self.options_button = customtkinter.CTkButton(master=self, text="Options", command=self.show_options, fg_color="transparent", border_width=1, text_color=("gray10", "#DCE4EE"))
         self.options_button.grid(row=1, column=1, padx=(20, 20), pady=(50, 0))
 
         # This label lets the user know the address of the server when it's being executed
         self.server_address_label = customtkinter.CTkLabel(master=self, text="", bg_color="transparent")
         self.server_address_label.grid(row=2, column=0)
-
-        # A temporary label to display the version and the author of the tool
-        self.infos_label = customtkinter.CTkLabel(master=self, text="Version: 1.0.1 \nAuthor: Forzo", bg_color="transparent")
-        self.infos_label.grid(row=3, column=1)
 
     # Add a video to the frame and to the server
     def add_video(self):
@@ -106,23 +111,26 @@ class App(customtkinter.CTk):
         # The video entered must be a path to one or more files
         if video_paths == "":
             return
-
+    
         else:
             for video_path in video_paths:
-                self.video_list_frame.add_video(video_path, "local") # Add the video to the list, which will also copy/move the video to the flask videos folder
+                option = CTkMessagebox.CTkMessagebox(title="Choose an option", message="Do you want to copy or move the video: " + pathlib.Path(video_path).stem,
+                        icon="question", option_1="Copy", option_2="Move")
+                
+                self.video_list_frame.add_video(video_path, "local-"+option.get().lower()) # Add the video to the list, which will also copy/move the video to the flask videos folder
 
     # This function is required as otherwise using only ScrollableLabelButtonFrame.remove_video won't work
     def delete_video(self, video):
         self.video_list_frame.remove_video(video) # video is the path obtained from App.add_video
 
-    # This function is executed only at the start of the execution to retrive videos that are already in flask videos folder
-    def retrive_videos(self):
+    # This function is executed only at the start of the execution to retrieve videos that are already in flask videos folder
+    def retrieve_videos(self):
         files = os.listdir("./_internal/static/videos/") # Get all the files inside the videos folder
 
         # Even if there should be only videos inside this folder, look for all the videos
         for file in files:
             if file.endswith((".mp4", ".mkv", ".avi", ".flv", ".mov", "wmv", ".vob", ".webm", ".3gp", ".ogv")):
-                self.video_list_frame.add_video(file, "local-do-not-operate") # Add the video to the list without copying/moving it
+                self.video_list_frame.add_video(file, "local") # Add the video to the list without copying/moving it
 
     def server_button_execute(self):
         if self.videoPlayer.server == None:
@@ -140,7 +148,15 @@ class App(customtkinter.CTk):
             self.server_address_label.configure(text="")
         
     def show_options(self):
-        pass
+        if self.options_window is None or not self.options_window.winfo_exists():
+
+            # The template manager needs to be in the parameters of Options as if it was created inside Options it would be destroyed 
+            # every time: it would lose the current mode selected
+            self.options_window = Options(self.templateManager) 
+            self.options_window.focus()
+
+        else:
+            self.options_window.focus() # If the options windows exist and the button is clicked again then it the options window will be focused
 
 if __name__ == "__main__":
     app = App()
