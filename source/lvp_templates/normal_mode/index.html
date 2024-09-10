@@ -3,28 +3,30 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Video Player</title>
+    <title>Local Video Player</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body>
     <div class="container">
-        <h1>Choose a video: </h1>
-        <div id="videoSelector">
+        <h1>Local Video Player</h1>
+        <div id="video_div">
             {% if videos %}
-                {% for video in videos %}
-                    <label>
-                        <input type="radio" name="video" value="{{ url_for('static', filename='videos/' + video) }}" {% if loop.first %}checked{% endif %} onclick="changeVideo()">
-                        {{ video }}
-                    </label><br>
-                {% endfor %}
+                <select id="video_combobox">
+                    {% for video in videos %}
+                        <option value="{{ url_for('static', filename='videos/' + video) }}">{{ video }}</option>
+                    {% endfor %}
+                </select>
+
             {% else %}
                 <p>You have to share at least one video to use Local Video Player.</p>
             {% endif %}
+
         </div>
+
         {% if videos %}
-            <div class="video-container">
-                <video id="videoPlayer" width="600" controls>
-                    <source id="videoSource" src="{{ url_for('static', filename='videos/' + videos[0]) }}" type="video/mp4">
+            <div class="video_container">
+                <video id="video_player" width="600" controls>
+                    <source id="video_path" src="{{ url_for('static', filename='videos/' + videos[0]) }}" type="video/mp4">
                     Your browser does not support the video tag.
                 </video>
             </div>

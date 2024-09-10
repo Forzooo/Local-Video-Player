@@ -17,14 +17,17 @@ body {
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
+video {
+    font-size: 16px;
+    padding: 8px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+}
+
 h1 {
     margin-bottom: 20px;
 }
 
 .video-container {
     margin-top: 20px;
-}
-
-input[type="radio"] {
-    margin: 10px;
 }

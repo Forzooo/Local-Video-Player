@@ -5,7 +5,7 @@ class LocalVideo:
 
     # Operation is required to tell the constructor whether it needs to copy/move the video or do nothing
     def __init__(self, video_path: str, operation: str):
-        self.video_path = video_path # Set the path of the video
+        self.video_path = video_path  # Set the path of the video
 
         self.player_directory = os.getcwd() # Get the directory of the script: used to copy/move the video into the server video directory
         self.server_video_directory = self.player_directory + "/_internal/static/videos/"

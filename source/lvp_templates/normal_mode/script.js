@@ -1,18 +1,12 @@
-function changeVideo() {
-    var radios = document.getElementsByName('video');
-    var selectedVideo = null;
-    for (var i = 0; i < radios.length; i++) {
-        if (radios[i].checked) {
-            selectedVideo = radios[i].value;
-            break;
-        }
-    }
+// Change current video to user-selected video
+function change_video(event) {
+    var video_selected = event.target.value; // Retrieve the video path from the video chosen
+    var video_player = document.getElementById('video_player'); // Retrieve the video player from the html script
+    var video_path = document.getElementById('video_path'); // Retrive the video path of the previous video selected
+    video_path.src = video_selected; // Change the path of the video to the one chosen by the user
+    video_player.load();
 
-    if (selectedVideo !== null) {
-        var videoPlayer = document.getElementById('videoPlayer');
-        var videoSource = document.getElementById('videoSource');
-        videoSource.src = selectedVideo;
-        videoPlayer.load();
-        videoPlayer.play();
-    }
 }
+
+// Attach the event listener to the video combobox
+document.getElementById('video_combobox').addEventListener('change', change_video);
