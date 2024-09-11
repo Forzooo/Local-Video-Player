@@ -11,7 +11,7 @@ class System:
     # Create the json file used for the options
     def create_json(self):
         # We need to replicate the TemplateManager.read_modes function for the template key for compatibility
-        body = {"version": "1.0.3", "template": f"{os.getcwd()}/_internal/lvp_templates/normal_mode/"}
+        body = {"version": "1.0.4", "template": f"{os.getcwd()}/_internal/lvp_templates/normal_mode/"}
 
         try:
             # Open the file in exclusive mode to raise FileExistError if the file already exist

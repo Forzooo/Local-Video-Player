@@ -4,7 +4,6 @@ from VideoPlayer import VideoPlayer
 from LocalVideo import LocalVideo
 from TemplateManager import TemplateManager
 from Options import Options
-from System import System
 
 # Set the mode and the theme of the Local Video Player GUI
 customtkinter.set_appearance_mode("System")
@@ -69,11 +68,9 @@ class App(customtkinter.CTk):
         self.templateManager = TemplateManager()
 
         # If there isn't a template loaded then to prevent any issues the template is loaded by the options file
-        self.system = System()
         if not self.templateManager.is_loaded():
-            self.templateManager.load_mode(self.system.read_json("template")[0])
+            self.templateManager.load_mode(self.templateManager.get_current_mode())
 
-        del(self.system)  # Delete the System object as it's not required anymore
         del(self.templateManager)  # Delete the Template Manager object as it's not required anymore
 
         self.title("Local Video Player")

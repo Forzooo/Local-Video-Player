@@ -36,7 +36,7 @@ class TemplateManager:
     # Load the new mode chosen by the user in the options of Local Video Player
     def load_mode(self, user_choice: str):
         self.mode = self.modes[user_choice]  # Set the current mode by the one choosed by the user from the options
-        self.system.write_json({"template": user_choice})  # Update the json to the new template being used
+        self.system.write_json({"template": self.modes[user_choice]})  # Update the json to the new template being used
 
         self.delete_mode()  # Delete the files of the previous mode
 
