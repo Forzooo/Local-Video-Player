@@ -3,6 +3,7 @@ import CTkMessagebox
 from TemplateManager import TemplateManager
 from System import System
 import ipaddress
+import requests
 
 class Options(customtkinter.CTkToplevel):
     "The Options class, which is a Toplevel of App, lets the user customize is experience when using the tool."
@@ -54,11 +55,14 @@ class Options(customtkinter.CTkToplevel):
         self.port_selection_button = customtkinter.CTkButton(master=self, text="Save changes", command=self.save_port_changes, fg_color="transparent", border_width=1, text_color=("gray10", "#DCE4EE"))
         self.port_selection_button.grid(row=2, column=2)
 
-        ### Problema corrente: Come inserire un bottone che salvi il testo dell'ip
+        # Check for new versions
+        self.version = "1.0.6"
+        self.check_version_button = customtkinter.CTkButton(master=self, text="Check for new versions", command=self.check_version, fg_color="transparent", border_width=1, text_color=("gray10", "#DCE4EE"))
+        self.check_version_button.grid(row=3, column=1)
 
         # Information about the tool
-        self.infos_label = customtkinter.CTkLabel(master=self, text="Version: 1.0.5 \nAuthor: Forzo", bg_color="transparent")
-        self.infos_label.grid(row=3, column=1)
+        self.infos_label = customtkinter.CTkLabel(master=self, text=f"Version: {self.version} \nAuthor: Forzo", bg_color="transparent")
+        self.infos_label.grid(row=3, column=2)
 
 
     # Load the template chosen by the user
@@ -77,7 +81,6 @@ class Options(customtkinter.CTkToplevel):
         except ipaddress.AddressValueError as e:
             CTkMessagebox.CTkMessagebox(title="Error", message=e, icon="cancel")
             return
-
 
         self.system.write_json({"ip": ip})
 
@@ -99,3 +102,21 @@ class Options(customtkinter.CTkToplevel):
             return
         
         self.system.write_json({"port": port})  # If the port is valid we can write it to the json
+
+    # Check if the version of the tool is the latest one available on GitHub
+    def check_version(self):
+        
+        # Obtain the data from the GitHub API of the Local Video Player repository
+        repository_data = (requests.get("https://api.github.com/repos/Forzooo/Local-Video-Player/releases")).json() 
+
+        latest_release = repository_data[0]  # Get the latest release from the json
+
+        # Obtain the version of the latest release
+        version = latest_release["tag_name"]
+
+        # Check if the current version is the latest
+        if self.version == version:
+            CTkMessagebox.CTkMessagebox(title="Latest Version", message=f"You have the latest version available.")
+
+        else:
+            CTkMessagebox.CTkMessagebox(title="New Version", message=f"The version {version} is now available to be downloaded.")

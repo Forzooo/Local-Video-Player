@@ -117,7 +117,8 @@ class App(customtkinter.CTk):
                 option = CTkMessagebox.CTkMessagebox(title="Choose an option", message="Do you want to copy or move the video: " + pathlib.Path(video_path).stem,
                         icon="question", option_1="Copy", option_2="Move")
                 
-                self.video_list_frame.add_video(video_path, "local-"+option.get().lower())  # Add the video to the list, which will also copy/move the video to the flask videos folder
+                # Add the video to the list, which will also copy/move the video to the flask videos folder
+                self.video_list_frame.add_video(video_path, "local-"+option.get().lower())
 
     # This function is required as otherwise using only VideoListFrame.remove_video won't work
     def delete_video(self, video):

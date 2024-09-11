@@ -48,11 +48,6 @@ class System:
         for key in data.keys():
             file_data[key] = data[key]
 
-        # Temporary if statement to delete the key: "version" from the json file to reflect the changes of 1.0.5
-        # It will be deprecated in the next version
-        if "version" in file_data.keys():
-            del(file_data["version"])
-
         # Update the data of json file
         with open(self.json_path, "w") as file:
             json.dump(file_data, file)
