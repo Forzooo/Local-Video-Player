@@ -5,19 +5,21 @@ class System:
 
     def __init__(self) -> None:
         self.json_path = "./_internal/settings.json"
-        self.create_json()
+        self.create_json()  # Create the json file. The creation is skipped if it already exist
+        self.update_json()  # Check if the current json has elements to be added
 
     
     # Create the json file used for the options
     def create_json(self):
         # We need to replicate the TemplateManager.read_modes function for the template key for compatibility
-        body = {"version": "1.0.4", "template": f"{os.getcwd()}/_internal/lvp_templates/normal_mode/"}
+        # body is a class variable because is used to update the json
+        self.body = {"template": f"{os.getcwd()}/_internal/lvp_templates/normal_mode/", "ip": "0.0.0.0", "port": 5000}
 
         try:
             # Open the file in exclusive mode to raise FileExistError if the file already exist
             # In this way the file won't be overwritten
             with open(self.json_path, "x") as file:
-                json.dump(body, file)   # Write content of the JSON to the file
+                json.dump(self.body, file)   # Write content of the JSON to the file
 
         except FileExistsError:   # If the file already exist ignore the error and stop the function
             return
@@ -46,6 +48,31 @@ class System:
         for key in data.keys():
             file_data[key] = data[key]
 
+        # Temporary if statement to delete the key: "version" from the json file to reflect the changes of 1.0.5
+        # It will be deprecated in the next version
+        if "version" in file_data.keys():
+            del(file_data["version"])
+
         # Update the data of json file
         with open(self.json_path, "w") as file:
             json.dump(file_data, file)
+
+
+    # Update the old json with the new elements added in the current version
+    def update_json(self):
+
+        # Read the current data of the json
+        with open(self.json_path, "r") as file:
+            file_data = json.load(file)
+
+        # Check if all the elements of self.body are in the json file
+        if len(file_data.keys()) != len(self.body.keys()):
+
+            # We need to add to the json the new elements added
+            for key in self.body.keys():
+
+                if key not in file_data.keys():
+                    file_data[key] = self.body[key]
+
+        # Update the json with the new changes
+        self.write_json(file_data)

@@ -63,8 +63,6 @@ class App(customtkinter.CTk):
     def __init__(self):
         super().__init__()
 
-        self.videoPlayer = VideoPlayer()  # Create the Video Player object used to manage the webserver
-
         self.templateManager = TemplateManager()
 
         # If there isn't a template loaded then to prevent any issues the template is loaded by the options file
@@ -135,12 +133,22 @@ class App(customtkinter.CTk):
                 self.video_list_frame.add_video(file, "local")  # Add the video to the list without copying/moving it
 
     def server_button_execute(self):
+
+        # Since the user can change the ip and the port we need to create every time a new VideoPlayer object
+        # Thus we first check if it exist, and in that case, which happens when the server is going to be stopped, we destroy the object
+        # Otherwise, if it doesn't exist already, it means that the server is going to start and will read the ip and port in the json
+        try:
+            self.videoPlayer
+
+        except AttributeError:
+            self.videoPlayer = VideoPlayer()
+
         if self.videoPlayer.server == None:
             self.process = self.videoPlayer.start_thread()  # Start the Flask server
             self.server_button.configure(text="Stop the server")  # Set the text of the button as "Stop server"
 
             # Set a label below the video list to let the user know the address where the server is being executed
-            self.server_address_label.configure(text=f"The server is running at the following address: {self.videoPlayer.ip}:{self.videoPlayer.port}") 
+            self.server_address_label.configure(text=f"The server is running at the following address: {self.videoPlayer.get_ip()}:{self.videoPlayer.port}") 
 
         else:
             self.process = self.videoPlayer.stop_thread()  # Stop the Flask server
@@ -148,6 +156,7 @@ class App(customtkinter.CTk):
 
             # As the server is not running anymore let the label of the server address be blank
             self.server_address_label.configure(text="")
+            del(self.videoPlayer)
         
     def show_options(self):
         if self.options_window is None or not self.options_window.winfo_exists():
