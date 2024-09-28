@@ -56,7 +56,7 @@ class Options(customtkinter.CTkToplevel):
         self.port_selection_button.grid(row=2, column=2)
 
         # Check for new versions
-        self.version = "1.0.6"
+        self.version = "1.0.7"
         self.check_version_button = customtkinter.CTkButton(master=self, text="Check for new versions", command=self.check_version, fg_color="transparent", border_width=1, text_color=("gray10", "#DCE4EE"))
         self.check_version_button.grid(row=3, column=1)
 

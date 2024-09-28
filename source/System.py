@@ -1,13 +1,30 @@
-import json, os
+import json
+import os
+import CTkMessagebox
 
 class System:
     "The System class currently is used to handle all the JSON operations."
 
     def __init__(self) -> None:
         self.json_path = "./_internal/settings.json"
+
+        self.create_flask_directories()  # Create the Flask directories used by the webserver
         self.create_json()  # Create the json file. The creation is skipped if it already exist
         self.update_json()  # Check if the current json has elements to be added
 
+
+    # Create the directories required by Flask
+    def create_flask_directories(self) -> None:
+        try:
+            # exist_ok = True is used to ignore 'WinError 183: Cannot create a file when that file already exists'
+            os.makedirs("./_internal/static", exist_ok=True)
+            os.makedirs("./_internal/static/videos", exist_ok=True)
+            os.makedirs("./_internal/templates", exist_ok=True)
+
+        except os.error as e: 
+            CTkMessagebox.CTkMessagebox(title="Error", message=f"The following error occured while creating the server folders: {e}", icon="cancel")
+            quit()  # Quit from the tool as these folders are required for the execution of the server            
+        
     
     # Create the json file used for the options
     def create_json(self):

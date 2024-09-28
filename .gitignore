@@ -169,3 +169,7 @@ compile.bat
 
 # Ignore the _internal folder as it's used only in development (When you compile the tool you will have your own _internal folder too)
 /_internal
+
+# Ignore the following two folders as they are used only in development
+/source/static
+/source/templates

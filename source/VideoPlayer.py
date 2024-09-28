@@ -7,8 +7,6 @@ class VideoPlayer:
     "The Video Player class allows the creation and execution of a local Flask webserver."
 
     def __init__(self, static_folder='static', template_folder='templates'):
-        self.createDirectories()  # Create the directories required by the webserver
-
         self.system = System()   # Create the system object used to retrieve the ip and port chosen by the user
 
         self.app = Flask(__name__, static_folder=static_folder, template_folder=template_folder)
@@ -20,18 +18,6 @@ class VideoPlayer:
         
         self.setup_routes()
 
-    # Create the directories required by Flask
-    def createDirectories(self) -> None:
-        try:
-            # exist_ok = True is used to ignore 'WinError 183: Cannot create a file when that file already exists'
-            os.makedirs("./_internal/static", exist_ok=True)
-            os.makedirs("./_internal/static/videos", exist_ok=True)
-            os.makedirs("./_internal/templates", exist_ok=True)
-
-        except os.error as e: 
-            CTkMessagebox(title="Error", message=f"The following error occured while creating the server folders: {e}", icon="cancel")
-            quit()  # Quit from the tool as these folders are required for the execution of the server            
-        
     def setup_routes(self):
         @self.app.route('/')
         def index():
