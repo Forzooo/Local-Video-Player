@@ -159,10 +159,10 @@ cython_debug/
 #  be found at https://github.com/github/gitignore/blob/main/Global/JetBrains.gitignore
 #  and can be added to the global gitignore or merged into this file.  For a more nuclear
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
-#.idea/
+/.idea/
 
 # You can find how to compile the tool in the README provided with the source code
-compile.bat
+compile.ps1
 
 # Backups of the source code used only for development
 /backups
@@ -170,6 +170,7 @@ compile.bat
 # Ignore the _internal folder as it's used only in development (When you compile the tool you will have your own _internal folder too)
 /_internal
 
-# Ignore the following two folders as they are used only in development
+# Ignore the following folders as they are used only in development
 /source/static
 /source/templates
+/development/

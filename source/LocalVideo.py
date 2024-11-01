@@ -1,39 +1,54 @@
-import os, shutil, pathlib
+import os
+import shutil
+import pathlib
+
 
 class LocalVideo:
-    "The Local Video class lets the Local Video Player manage all the videos that are already in the user file system."
+    """The Local Video class lets the Local Video Player manage all the videos that are already in the user file
+     system."""
 
-    # Operation is required to tell the constructor whether it needs to copy/move the video or do nothing
-    def __init__(self, video_path: str, operation: str):
+    # Constructor without the task parameter, thus to create the object without moving/copying
+    def __init__(self, video_path: str):
         self.video_path = video_path  # Set the path of the video
 
-        self.player_directory = os.getcwd() # Get the directory of the script: used to copy/move the video into the server video directory
-        self.server_video_directory = self.player_directory + "/_internal/static/videos/"
-        
-        # Define the path where the video will be after it has been copied or moved
-        self.local_video_path = self.server_video_directory + os.path.basename(self.video_path) 
+        # Get the directory of the tool even if the video is not going to be copied or moved
+        self.server_video_directory = os.getcwd() + "/_internal/static/videos/"
 
-        # Check which operation the LocalVideo object should do, if it's required one
-        if operation == "copy":
+        # Define the path where the video will be after it has been copied or moved
+        self.local_video_path = self.server_video_directory + os.path.basename(self.video_path)
+
+    # Operation is used to tell the constructor whether it needs to copy or move the video
+    def __init__(self, video_path: str, task: str):
+        self.video_path = video_path  # Set the path of the video
+
+        # Get the directory of the tool: used to move the video into the server video directory
+        self.server_video_directory = os.getcwd() + "/_internal/static/videos/"
+
+        # Define the path where the video will be after it has been copied or moved
+        self.local_video_path = self.server_video_directory + os.path.basename(self.video_path)
+
+        # Check which task the LocalVideo object has to do
+        if task == "copy":
             self.copy()
 
-        elif operation == "move":
+        elif task == "move":
             self.move()
 
+    # Copy the video file to the server video directory.
     def copy(self):
-        # Copy the video file to the server video directory. Since shutil.copyfile requires as destination another file, and not a directory,
+        # Since shutil.copyfile requires as destination another file, and not a directory,
         # we need to get the filename of the video we want to copy
-        shutil.copyfile(self.video_path, self.local_video_path) 
+        shutil.copyfile(self.video_path, self.local_video_path)
 
+    # Move the video file to the server video directory
     def move(self):
-        # Move the video file to the server video directory
         shutil.move(self.video_path, self.server_video_directory)
 
     # When the user chooses to delete the video from the list, the files gets deleted
     def delete(self):
         os.remove(self.local_video_path)
 
-    # Return the basename of the video
+    # Return the filename of the video
     def get_video_name(self) -> str:
-        # Get the filaname of the video file: stem removes only the last extension of the file
+        # stem removes only the last extension of the file
         return pathlib.Path(self.video_path).stem
