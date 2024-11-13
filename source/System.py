@@ -28,6 +28,8 @@ class System:
             "whitelist": [False, None]
         }
 
+        self.version = "1.1.1"  # Define the current version of the tool
+
         self.create_settings()  # Create the settings file. The creation is skipped if it already exists
         self.update_settings()  # Check if the current settings has elements to be added
 

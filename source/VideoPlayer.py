@@ -4,6 +4,7 @@ import socket
 from flask import Flask, render_template, request, abort
 from werkzeug.serving import make_server
 from System import System
+from TemplateManager import TemplateManager
 
 
 class VideoPlayer:
@@ -23,6 +24,10 @@ class VideoPlayer:
 
         # Get either a list[Str] if whitelist is enabled, otherwise None
         self.whitelist = self.system.read_settings_element("whitelist")
+
+        # Load, if a template is not loaded yet, the one defined inside settings.json
+        template_manager = TemplateManager()
+        del template_manager  # Delete the object as it's not used anymore
 
         # Define the routes of the server
         self.setup_routes()
@@ -53,7 +58,7 @@ class VideoPlayer:
             videos = [video for video in os.listdir(video_folder) if video.endswith((".mp4", ".mkv", ".avi", ".flv",
                                                                                      ".mov", "wmv", ".vob", ".webm",
                                                                                      ".3gp", ".ogv",))]
-            return render_template('index.html', videos=videos)
+            return render_template('index.html', videos=videos, version=self.system.version)
 
     def run(self):
         # If the SSL keys are entered by the user, then start the Flask server with it, otherwise use HTTP

@@ -7,18 +7,8 @@ class LocalVideo:
     """The Local Video class lets the Local Video Player manage all the videos that are already in the user file
      system."""
 
-    # Constructor without the task parameter, thus to create the object without moving/copying
-    def __init__(self, video_path: str):
-        self.video_path = video_path  # Set the path of the video
-
-        # Get the directory of the tool even if the video is not going to be copied or moved
-        self.server_video_directory = os.getcwd() + "/_internal/static/videos/"
-
-        # Define the path where the video will be after it has been copied or moved
-        self.local_video_path = self.server_video_directory + os.path.basename(self.video_path)
-
-    # Operation is used to tell the constructor whether it needs to copy or move the video
-    def __init__(self, video_path: str, task: str):
+    # Task is used to tell the constructor whether it needs to copy, move or do nothing about the video
+    def __init__(self, video_path: str, task: None | str):
         self.video_path = video_path  # Set the path of the video
 
         # Get the directory of the tool: used to move the video into the server video directory

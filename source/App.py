@@ -35,7 +35,7 @@ class VideoListFrame(customtkinter.CTkScrollableFrame):
 
         # 'local' without any operation currently is executed only with the function App.retrieve_videos
         if source == "local":
-            local_video = LocalVideo(video)
+            local_video = LocalVideo(video, task=None)
 
         elif source == "local-copy":  # Check if the task, assuming the video is local, is to execute copy
             local_video = LocalVideo(video, task="copy")

@@ -175,15 +175,14 @@ class Settings(customtkinter.CTkToplevel):
                                                                border_width=1, text_color=("gray10", "#DCE4EE"))
         self.whitelist_modify_button.grid(row=4, column=2)
 
-        # Tool version sectiono
-        self.version = "1.1.0"
+        # Tool version section
         self.check_version_button = customtkinter.CTkButton(master=self, text="Check for new versions",
                                                             command=self.check_version, fg_color="transparent",
                                                             border_width=1, text_color=("gray10", "#DCE4EE"))
         self.check_version_button.grid(row=5, column=3)
 
         # Information about the tool section
-        self.infos_label = customtkinter.CTkLabel(master=self, text=f"Version: {self.version} \nAuthor: Forzo",
+        self.infos_label = customtkinter.CTkLabel(master=self, text=f"Version: {self.system.version} \nAuthor: Forzo",
                                                   bg_color="transparent")
         self.infos_label.grid(row=5, column=4)
 
@@ -412,7 +411,7 @@ class Settings(customtkinter.CTkToplevel):
         version = latest_release["tag_name"]
 
         # Check if the current version is the latest
-        if self.version == version:
+        if self.system.version == version:
             CTkMessagebox.CTkMessagebox(title="Latest Version", message=f"You have the latest version available.")
 
         else:
